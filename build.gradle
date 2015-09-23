@@ -1,0 +1,25 @@
+group 'at.bayava'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'scala'
+apply plugin: 'idea'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+idea {
+	module {
+		downloadSources = true
+		downloadJavadoc = true
+	}
+}
+
+dependencies {
+	compile 'org.scala-lang:scala-dist:2.11.+'
+	compile 'org.apache.logging.log4j:log4j-core:2.+'
+	testCompile 'junit:junit:4.+'
+	testCompile 'org.scalatest:scalatest_2.11:2.2.4'
+	testCompile 'org.scalacheck:scalacheck_2.11:1.12.+'
+}
