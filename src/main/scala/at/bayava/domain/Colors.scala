@@ -7,7 +7,7 @@ import scala.collection.mutable
  */
 object Colors {
 
-  val colorList = mutable.MutableList[Color]()
+  private val colorList = mutable.MutableList[Color]()
 
   sealed abstract class Color(val value: Char) {
     colorList += this

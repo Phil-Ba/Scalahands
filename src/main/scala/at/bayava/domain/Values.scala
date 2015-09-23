@@ -7,7 +7,7 @@ import scala.collection.mutable
  */
 object Values {
 
-  val valueList = mutable.MutableList[Value]()
+  private val valueList = mutable.MutableList[Value]()
 
   sealed abstract class Value(val value: Char, val ordinal: Short) extends Ordered[Value] {
     valueList += this
@@ -40,7 +40,6 @@ object Values {
   case object KING extends Value('k', 13)
 
   case object ACE extends Value('a', 14)
-
 
   def fromChar(value: Char): Value = {
     def valLower = value.toLower

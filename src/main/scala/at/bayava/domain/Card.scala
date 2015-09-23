@@ -12,7 +12,6 @@ class Card(val value: Value, val color: Color) extends Ordered[Card] {
     value.compare(that.value)
   }
 
-
 }
 
 object Card {
