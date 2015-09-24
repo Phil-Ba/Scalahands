@@ -15,15 +15,16 @@ class ValuesTest extends BaseScalahandsSpec {
         }
       }
 
-      val values = Table(("input", "expected"),
-        ('9', NINE),
-        ('3', THREE),
-        ('T', TEN),
-        ('Q', QUEEN),
-        ('a', ACE),
-        ('A', ACE)
-      )
       it("should return the appropriate Object") {
+        val values = Table(("input", "expected"),
+          ('9', NINE),
+          ('3', THREE),
+          ('T', TEN),
+          ('Q', QUEEN),
+          ('a', ACE),
+          ('A', ACE)
+        )
+
         forAll(values) { (input: Char, expected: Values.Value) =>
           assert(Values.fromChar(input) == expected)
         }

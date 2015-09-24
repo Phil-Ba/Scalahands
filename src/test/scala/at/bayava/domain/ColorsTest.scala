@@ -15,14 +15,15 @@ class ColorsTest extends BaseScalahandsSpec {
         }
       }
 
-      val colors = Table(("input", "expected"),
-        ('h', HEARTHS),
-        ('H', HEARTHS),
-        ('c', CLUBS),
-        ('S', SPADES),
-        ('d', DIAMONDS)
-      )
       it("should return the appropriate Object") {
+        val colors = Table(("input", "expected"),
+          ('h', HEARTHS),
+          ('H', HEARTHS),
+          ('c', CLUBS),
+          ('S', SPADES),
+          ('d', DIAMONDS)
+        )
+
         forAll(colors) { (input: Char, expected: Colors.Color) =>
           assert(Colors.fromChar(input) == expected)
         }
