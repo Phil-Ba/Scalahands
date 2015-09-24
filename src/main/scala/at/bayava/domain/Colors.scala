@@ -1,16 +1,12 @@
 package at.bayava.domain
 
-import scala.collection.mutable
-
 /**
  * Created by pbayer.
  */
 object Colors {
 
-  private val colorList = mutable.MutableList[Color]()
 
   sealed abstract class Color(val value: Char) {
-    colorList += this
   }
 
   case object CLUBS extends Color('c')
@@ -20,6 +16,8 @@ object Colors {
   case object DIAMONDS extends Color('d')
 
   case object SPADES extends Color('s')
+
+  private val colorList = CLUBS :: HEARTHS :: DIAMONDS :: SPADES :: Nil
 
   def fromChar(value: Char): Color = {
     def valLower = value.toLower

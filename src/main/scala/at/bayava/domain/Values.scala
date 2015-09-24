@@ -1,19 +1,20 @@
 package at.bayava.domain
 
-import scala.collection.mutable
-
 /**
  * Created by pbayer.
  */
 object Values {
 
-  private val valueList = mutable.MutableList[Value]()
 
   sealed abstract class Value(val value: Char, val ordinal: Short) extends Ordered[Value] {
-    valueList += this
+
+    def unapply(value: Char): Boolean = {
+      this.value == value
+    }
 
     override def compare(that: Value): Int = this.ordinal.compare(that.ordinal)
   }
+
 
   case object TWO extends Value('2', 2)
 
@@ -41,8 +42,15 @@ object Values {
 
   case object ACE extends Value('a', 14)
 
+
+  private val allValues = TWO :: THREE :: FOUR :: FIVE :: SIX :: SEVEN :: EIGHT :: NINE :: TEN :: JACK :: QUEEN :: KING :: ACE :: Nil
+
+
   def fromChar(value: Char): Value = {
-    def valLower = value.toLower
-    valueList.find((v: Value) => v.value == valLower).getOrElse(throw new IllegalArgumentException(s"Unknown card value '$value'!"))
+
+    val valLower = value.toLower
+    allValues.find({ (v: Value) =>
+      v.value == valLower
+    }).getOrElse(throw new IllegalArgumentException(s"Unknown card value '$value'!"))
   }
 }
