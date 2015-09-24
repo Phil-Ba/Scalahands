@@ -2,16 +2,11 @@ package at.bayava.domain
 
 import at.bayava.domain.Colors.Color
 import at.bayava.domain.Values.Value
-import org.junit.runner.RunWith
-import org.scalatest.FunSpec
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.PropertyChecks
 
 /**
  * Created by pbayer.
  */
-@RunWith(classOf[JUnitRunner])
-class CardTest extends FunSpec with PropertyChecks {
+class CardTest extends BaseScalahandsSpec {
   describe("Cards") {
     describe("apply method") {
 
@@ -40,8 +35,34 @@ class CardTest extends FunSpec with PropertyChecks {
           assert(card.color == color)
         }
       }
+    }
+
+    describe("should be equal") {
+      it("if they have the same color and value") {
+        val cardValues = Table("card", "2H", "tC", "As")
+        forAll(cardValues) { card =>
+          assert(Card(card) == Card(card))
+          assert(Card(card.toLowerCase) == Card(card.toUpperCase))
+        }
+      }
+    }
+
+    describe("should not be equal") {
+      it("if they have different color or values") {
+        val cardValues = Table(("card1", "card2"),
+          ("2S", "2H")
+          , ("3C", "4C")
+          , ("5h", "6H")
+          , ("tc", "ts")
+        )
+        forAll(cardValues) { (card1: String, card2: String) =>
+          assert(Card(card1) != Card(card2))
+          assert(Card(card2) != Card(card1))
+        }
+      }
 
     }
+
   }
 
 }

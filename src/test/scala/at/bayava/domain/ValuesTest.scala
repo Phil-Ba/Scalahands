@@ -1,16 +1,11 @@
 package at.bayava.domain
 
 import at.bayava.domain.Values._
-import org.junit.runner.RunWith
-import org.scalatest.FunSpec
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.PropertyChecks
 
 /**
  * Created by pbayer.
  */
-@RunWith(classOf[JUnitRunner])
-class ValuesTest extends FunSpec with PropertyChecks {
+class ValuesTest extends BaseScalahandsSpec {
 
   describe("Values") {
     describe("when calling the fromChar factory method") {
@@ -25,7 +20,8 @@ class ValuesTest extends FunSpec with PropertyChecks {
         ('3', THREE),
         ('T', TEN),
         ('Q', QUEEN),
-        ('a', ACE)
+        ('a', ACE),
+        ('A', ACE)
       )
       it("should return the appropriate Object") {
         forAll(values) { (input: Char, expected: Values.Value) =>

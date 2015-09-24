@@ -1,16 +1,11 @@
 package at.bayava.domain
 
 import at.bayava.domain.Colors.{CLUBS, DIAMONDS, HEARTHS, SPADES}
-import org.junit.runner.RunWith
-import org.scalatest.FunSpec
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.PropertyChecks
 
 /**
  * Created by pbayer.
  */
-@RunWith(classOf[JUnitRunner])
-class ColorsTest extends FunSpec with PropertyChecks {
+class ColorsTest extends BaseScalahandsSpec {
 
   describe("Colors") {
     describe("when calling the fromChar factory method") {
