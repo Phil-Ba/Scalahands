@@ -12,6 +12,19 @@ class Card(val value: Value, val color: Color) extends Ordered[Card] {
     value.compare(that.value)
   }
 
+  override def toString: String = s"Card(value: $value , color: $color)"
+
+  override def equals(other: Any): Boolean = other match {
+    case that: Card =>
+      value == that.value &&
+        color == that.color
+    case _ => false
+  }
+
+  override def hashCode(): Int = {
+    val state = Seq(value, color)
+    state.map(_.hashCode()).foldLeft(0)((a, b) => 31 * a + b)
+  }
 }
 
 object Card {
