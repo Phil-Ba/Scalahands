@@ -31,7 +31,7 @@ object Card {
 
   def apply(input: String): Card = {
     require(input != null && input.length == 2, "The input string must have exactly 2 characters!")
-    new Card(Values.fromChar(input charAt 0), Colors.fromChar(input charAt 1))
+    new Card(Values(input charAt 0), Colors(input charAt 1))
   }
 
 }

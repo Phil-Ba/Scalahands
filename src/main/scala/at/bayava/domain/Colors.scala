@@ -19,7 +19,7 @@ object Colors {
 
   private val colorList = CLUBS :: HEARTHS :: DIAMONDS :: SPADES :: Nil
 
-  def fromChar(value: Char): Color = {
+  def apply(value: Char): Color = {
     def valLower = value.toLower
     colorList.find((c: Color) => c.value == valLower).getOrElse(throw new IllegalArgumentException(s"Unknown color '$value'!"))
   }

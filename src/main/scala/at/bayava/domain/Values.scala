@@ -46,7 +46,7 @@ object Values {
   private val allValues = TWO :: THREE :: FOUR :: FIVE :: SIX :: SEVEN :: EIGHT :: NINE :: TEN :: JACK :: QUEEN :: KING :: ACE :: Nil
 
 
-  def fromChar(value: Char): Value = {
+  def apply(value: Char): Value = {
 
     val valLower = value.toLower
     allValues.find({ (v: Value) =>

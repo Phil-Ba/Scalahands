@@ -11,7 +11,7 @@ class ColorsTest extends BaseScalahandsSpec {
     describe("when calling the fromChar factory method") {
       it("should throw an IllegalArgumentException for unknown values") {
         intercept[IllegalArgumentException] {
-          Colors.fromChar('X')
+          Colors('X')
         }
       }
 
@@ -25,7 +25,7 @@ class ColorsTest extends BaseScalahandsSpec {
         )
 
         forAll(colors) { (input: Char, expected: Colors.Color) =>
-          assert(Colors.fromChar(input) == expected)
+          assert(Colors(input) == expected)
         }
       }
     }
