@@ -8,10 +8,6 @@ object Values {
 
   sealed abstract class Value(val value: Char, val ordinal: Short) extends Ordered[Value] {
 
-    def unapply(value: Char): Boolean = {
-      this.value == value
-    }
-
     override def compare(that: Value): Int = this.ordinal.compare(that.ordinal)
   }
 

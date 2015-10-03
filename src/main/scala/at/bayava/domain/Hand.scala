@@ -28,6 +28,7 @@ class Hand(val cards: List[Card]) {
     }
   }
 
+  override def toString: String = super.toString + " : " + cards.toString()
 }
 
 object Hand {
