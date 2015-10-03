@@ -21,7 +21,7 @@ class CardTest extends BaseScalahandsSpec {
         }
       }
 
-      it("should") {
+      it("should create the right cards for a string input using apply") {
         val applyValues = Table(("input", "color", "value")
           , ("8C", Colors.CLUBS, Values.EIGHT)
           , ("kd", Colors.DIAMONDS, Values.KING)
@@ -64,7 +64,20 @@ class CardTest extends BaseScalahandsSpec {
           assert(Card(card2) != Card(card1))
         }
       }
+    }
 
+    it("the card with the higher value should be considered as higher") {
+      val cardValues = Table(("card1", "card2", "expected result"),
+        ("2S", "2H", 0),
+        ("3C", "4D", -1),
+        ("4C", "3D", 1),
+        ("5h", "6H", -1),
+        ("tc", "5s", 1)
+      )
+
+      forAll(cardValues) { (card1, card2, expectedResult) =>
+        assert(Card(card1).compareTo(Card(card2)).signum == expectedResult)
+      }
     }
 
   }
