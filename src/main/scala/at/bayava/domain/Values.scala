@@ -6,7 +6,7 @@ package at.bayava.domain
 object Values {
 
 
-  sealed abstract class Value(val value: Char, val ordinal: Short) extends Ordered[Value] {
+  sealed abstract class Value(val value: Char, val ordinal: Int) extends Ordered[Value] {
 
     override def compare(that: Value): Int = this.ordinal.compare(that.ordinal)
   }

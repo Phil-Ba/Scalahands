@@ -62,7 +62,7 @@ object Combinations {
   }
 
   object Flush {
-    def unapply(hand: Hand): Option[Flush] = if (hand.countColorGroups().exists(_._2 == 4)) Some(new Flush(hand)) else None
+    def unapply(hand: Hand): Option[Flush] = if (hand.countColorGroups().exists(_._2 == hand.cards.size)) Some(new Flush(hand)) else None
   }
 
   class Straight(hand: Hand) extends Combination(hand, 5) {
@@ -123,6 +123,7 @@ object Combinations {
 
   def matchCombination(hand: Hand): Combination = {
     hand match {
+      case RoyalFlush(royalFlush) => royalFlush
       case Poker(poker) => poker
       case FullHouse(fullHouse) => fullHouse
       case Flush(flush) => flush
