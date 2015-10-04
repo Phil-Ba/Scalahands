@@ -135,6 +135,20 @@ class CombinationsTest extends BaseScalahandsSpec {
       }
     }
 
+  }
+
+  it("High card should compare correctly") {
+    val hands = Table(("this", "that", "expected"),
+      ("Ac as th td tc", "Ad ac ts th ts", 0),
+      ("Ac as 4h td tc", "Ac as th td tc", -1),
+      ("2c 3s 4h td tc", "5c 4s 7h 8d 9c", 1),
+      ("Ad kh qh jd 7c", "Ac ks qc jd 9d", -1)
+    )
+    forAll(hands) { (thisHand, thatHand, expected) =>
+      val thisPair = new Pair(Hand(thisHand))
+      val thatPair = new Pair(Hand(thatHand))
+      assert(thisPair.compareTo(thatPair).signum == expected)
+    }
 
   }
 }

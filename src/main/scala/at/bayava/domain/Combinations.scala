@@ -7,7 +7,29 @@ import at.bayava.domain.Values.{ACE, TWO}
  */
 object Combinations {
 
-  sealed abstract class Combination(hand: Hand, rank: Int) {
+  sealed abstract class Combination(val hand: Hand, val rank: Int) extends Ordered[Combination] {
+
+    override def compare(that: Combination): Int = {
+      val compareByRank: Int = this.rank compareTo that.rank
+      if (compareByRank != 0) {
+        compareByRank
+      }
+      else {
+        customCompare(that)
+      }
+    }
+
+    protected def customCompare(that: Combination): Int = {
+      val sortedThis: List[Card] = this.hand.cards.sorted.reverse
+      val sortedThat: List[Card] = that.hand.cards.sorted.reverse
+      for (index <- sortedThis.indices) {
+        if (sortedThis(index).value != sortedThat(index).value) {
+          return sortedThis(index) compare sortedThat(index)
+        }
+      }
+      0
+    }
+
     override def toString: String = this.getClass.getSimpleName
   }
 
