@@ -1,6 +1,7 @@
 package at.bayava.domain
 
 import at.bayava.domain.Combinations._
+import org.scalatest.prop.TableFor3
 
 /**
  * Created by pbayer.
@@ -160,12 +161,9 @@ class CombinationsTest extends BaseScalahandsSpec {
         ("4c as 4h 5d tc", "2c 5s 5h 4d 3c", -1)
       )
 
-      forAll(hands) { (thisHand, thatHand, expected) =>
-        val thisPair = new Pair(Hand(thisHand))
-        val thatPair = new Pair(Hand(thatHand))
-        assert(thisPair.compareTo(thatPair).signum == expected)
-        assert(thatPair.compareTo(thisPair).signum == -expected)
-      }
+      assertCompareResult(hands, {
+        new Pair(_)
+      })
     }
 
     it("and then by their kickers") {
@@ -175,12 +173,70 @@ class CombinationsTest extends BaseScalahandsSpec {
         ("4c 2s 5h td tc", "5c ts th 4d 3c", -1)
       )
 
-      forAll(hands) { (thisHand, thatHand, expected) =>
-        val thisPair = new Pair(Hand(thisHand))
-        val thatPair = new Pair(Hand(thatHand))
-        assert(thisPair.compareTo(thatPair).signum == expected)
-        assert(thatPair.compareTo(thisPair).signum == -expected)
-      }
+      assertCompareResult(hands, {
+        new Pair(_)
+      })
+    }
+  }
+
+  describe("Two Pairs") {
+    it("should primarily compared by the pairs") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th td 8c", "Ad ac ts th 8s", 0),
+        ("kc ks th td 8c", "qd qc js jh as", 1),
+        ("kc ks qh qd 8c", "kd kc js jh as", 1)
+      )
+
+      assertCompareResult(hands, {
+        new TwoPairs(_)
+      })
+    }
+
+    it("and then by their kickers") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th td 9c", "Ad ac ts th 8s", 1),
+        ("qc qs th td 8c", "td tc qs qh as", -1),
+        ("Ac qs ah td qc", "qd ac 2s ah qs", 1)
+      )
+
+      assertCompareResult(hands, {
+        new TwoPairs(_)
+      })
+    }
+  }
+
+  describe("Three of a kind") {
+    it("should primarily compared by the pairs") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th ad 8c", "Ad ac as th 8s", 0),
+        ("kc ts th td 8c", "8d 8c js 8h as", 1),
+        ("kc 8s 8h qd 8c", "2d jc js jh 3d", -1)
+      )
+
+      assertCompareResult(hands, {
+        new ThreeOfAKind(_)
+      })
+    }
+
+    it("and then by their kickers") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac ts th td 9c", "Ad tc ts th 8s", 1),
+        ("qc qs qh td 8c", "td qc qs qh as", -1),
+        ("Ac as ah td kc", "qd ac as ah js", 1)
+      )
+
+      assertCompareResult(hands, {
+        new ThreeOfAKind(_)
+      })
+    }
+  }
+
+  def assertCompareResult(hands: TableFor3[String, String, Int], constructor: Hand => Combination) = {
+    forAll(hands) { (thisHand, thatHand, expected) =>
+      val thisPair = constructor(Hand(thisHand))
+      val thatPair = constructor(Hand(thatHand))
+      assert(thisPair.compareTo(thatPair).signum == expected)
+      assert(thatPair.compareTo(thisPair).signum == -expected)
     }
   }
 
