@@ -140,15 +140,48 @@ class CombinationsTest extends BaseScalahandsSpec {
   it("High card should compare correctly") {
     val hands = Table(("this", "that", "expected"),
       ("Ac as th td tc", "Ad ac ts th ts", 0),
-      ("Ac as 4h td tc", "Ac as th td tc", -1),
-      ("2c 3s 4h td tc", "5c 4s 7h 8d 9c", 1),
+      ("Ac as 4h td tc", "Ac as th 9d tc", -1),
+      ("2c 3s 4h td 9c", "5c 4s 7h 8d 9c", 1),
       ("Ad kh qh jd 7c", "Ac ks qc jd 9d", -1)
     )
     forAll(hands) { (thisHand, thatHand, expected) =>
       val thisPair = new Pair(Hand(thisHand))
       val thatPair = new Pair(Hand(thatHand))
       assert(thisPair.compareTo(thatPair).signum == expected)
+      assert(thatPair.compareTo(thisPair).signum == -expected)
+    }
+  }
+
+  describe("Pairs") {
+    it("should primarily compared by the pairs") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th 9d 8c", "Ad ac ts 9h 8s", 0),
+        ("Ac as th 9d 8c", "qd qc as 9h 8s", 1),
+        ("4c as 4h 5d tc", "2c 5s 5h 4d 3c", -1)
+      )
+
+      forAll(hands) { (thisHand, thatHand, expected) =>
+        val thisPair = new Pair(Hand(thisHand))
+        val thatPair = new Pair(Hand(thatHand))
+        assert(thisPair.compareTo(thatPair).signum == expected)
+        assert(thatPair.compareTo(thisPair).signum == -expected)
+      }
     }
 
+    it("and then by their kickers") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th 9d 8c", "Ad ac ts 7h 8s", 1),
+        ("Ac qs th qd 8c", "qd qc 2s 9h 8s", 1),
+        ("4c 2s 5h td tc", "5c ts th 4d 3c", -1)
+      )
+
+      forAll(hands) { (thisHand, thatHand, expected) =>
+        val thisPair = new Pair(Hand(thisHand))
+        val thatPair = new Pair(Hand(thatHand))
+        assert(thisPair.compareTo(thatPair).signum == expected)
+        assert(thatPair.compareTo(thisPair).signum == -expected)
+      }
+    }
   }
+
 }

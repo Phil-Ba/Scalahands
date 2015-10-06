@@ -1,6 +1,6 @@
 package at.bayava.domain
 
-import at.bayava.domain.Values.{ACE, TWO}
+import at.bayava.domain.Values.{ACE, TWO, Value}
 
 /**
  * Created by pbayer.
@@ -12,19 +12,41 @@ object Combinations {
     override def compare(that: Combination): Int = {
       val compareByRank: Int = this.rank compareTo that.rank
       if (compareByRank != 0) {
+        println("Combinations are different, comparing by rank!")
         compareByRank
       }
       else {
-        customCompare(that)
+        println("Combinations are the same, comparing by pairs!")
+        comparePairedCards(that)
       }
     }
 
-    protected def customCompare(that: Combination): Int = {
-      val sortedThis: List[Card] = this.hand.cards.sorted.reverse
-      val sortedThat: List[Card] = that.hand.cards.sorted.reverse
-      for (index <- sortedThis.indices) {
-        if (sortedThis(index).value != sortedThat(index).value) {
-          return sortedThis(index) compare sortedThat(index)
+    protected def comparePairedCards(that: Combination): Int = {
+      val thisCardsByCount = hand.countValueGroups() groupBy (_._2) mapValues (_.keySet)
+      val thatCardsByCount = that.hand.countValueGroups() groupBy (_._2) mapValues (_.keySet)
+      val thisSortedKeys = thisCardsByCount.keySet.toList.sorted(Ordering[Int].reverse)
+      val thatSortedKeys = thisCardsByCount.keySet.toList.sorted(Ordering[Int].reverse)
+      for (index <- thisSortedKeys.indices) {
+        val thisSortedValues = thisCardsByCount(thisSortedKeys(index)).toList.sorted(Ordering[Value].reverse)
+        val thatSortedValues = thatCardsByCount(thatSortedKeys(index)).toList.sorted(Ordering[Value].reverse)
+        for (indexValue <- thisSortedValues.indices) {
+          val result = thisSortedValues(indexValue).compare(thatSortedValues(indexValue))
+          if (result != 0) {
+            println(s"Different pair value found: this='${thisSortedValues(indexValue)}' that='${thisSortedValues(indexValue)}'")
+            return result
+          }
+        }
+      }
+      compareKickers(that)
+    }
+
+    protected def compareKickers(that: Combination): Int = {
+      val sortedThisKickers: List[Card] = this.hand.kickers().sorted(Ordering[Card].reverse)
+      val sortedThatKickers: List[Card] = that.hand.kickers().sorted(Ordering[Card].reverse)
+      for (index <- sortedThisKickers.indices) {
+        if (sortedThisKickers(index).value != sortedThatKickers(index).value) {
+          println(s"Different kicker value found: this='${sortedThisKickers(index)}' that='${sortedThatKickers(index)}'")
+          return sortedThisKickers(index) compare sortedThatKickers(index)
         }
       }
       0
