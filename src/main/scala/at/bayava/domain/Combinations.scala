@@ -22,8 +22,8 @@ object Combinations {
     }
 
     protected def comparePairedCards(that: Combination): Int = {
-      val thisCardsByCount = hand.countValueGroups() groupBy (_._2) mapValues (_.keySet)
-      val thatCardsByCount = that.hand.countValueGroups() groupBy (_._2) mapValues (_.keySet)
+      val thisCardsByCount = hand.countValueGroups groupBy (_._2) mapValues (_.keySet)
+      val thatCardsByCount = that.hand.countValueGroups groupBy (_._2) mapValues (_.keySet)
       val thisSortedKeys = thisCardsByCount.keySet.toList.sorted(Ordering[Int].reverse)
       val thatSortedKeys = thisCardsByCount.keySet.toList.sorted(Ordering[Int].reverse)
       for (index <- thisSortedKeys.indices) {
@@ -41,8 +41,8 @@ object Combinations {
     }
 
     protected def compareKickers(that: Combination): Int = {
-      val sortedThisKickers: List[Card] = this.hand.kickers().sorted(Ordering[Card].reverse)
-      val sortedThatKickers: List[Card] = that.hand.kickers().sorted(Ordering[Card].reverse)
+      val sortedThisKickers: List[Card] = this.hand.kickers.sorted(Ordering[Card].reverse)
+      val sortedThatKickers: List[Card] = that.hand.kickers.sorted(Ordering[Card].reverse)
       for (index <- sortedThisKickers.indices) {
         if (sortedThisKickers(index).value != sortedThatKickers(index).value) {
           println(s"Different kicker value found: this='${sortedThisKickers(index)}' that='${sortedThatKickers(index)}'")
@@ -79,7 +79,7 @@ object Combinations {
   }
 
   object Poker {
-    def unapply(hand: Hand): Option[Poker] = if (hand.countValueGroups().exists(_._2 == 4)) Some(new Poker(hand)) else None
+    def unapply(hand: Hand): Option[Poker] = if (hand.countValueGroups.exists(_._2 == 4)) Some(new Poker(hand)) else None
   }
 
   class FullHouse(hand: Hand) extends Combination(hand, 7) {
@@ -106,10 +106,27 @@ object Combinations {
   }
 
   object Flush {
-    def unapply(hand: Hand): Option[Flush] = if (hand.countColorGroups().exists(_._2 == hand.cards.size)) Some(new Flush(hand)) else None
+    def unapply(hand: Hand): Option[Flush] = if (hand.countColorGroups.exists(_._2 == hand.cards.size)) Some(new Flush(hand)) else None
   }
 
   class Straight(hand: Hand) extends Combination(hand, 5) {
+
+    //    def aceLow(hand: Hand):List[Card]={
+    //      hand.kickers.
+    //    }
+
+    override protected def compareKickers(that: Combination): Int = {
+      val sortedThisKickers: List[Card] = this.hand.kickers.sorted(Ordering[Card].reverse)
+      val sortedThatKickers: List[Card] = that.hand.kickers.sorted(Ordering[Card].reverse)
+      for (index <- sortedThisKickers.indices) {
+        if (sortedThisKickers(index).value != sortedThatKickers(index).value) {
+          println(s"Different kicker value found: this='${sortedThisKickers(index)}' that='${sortedThatKickers(index)}'")
+          return sortedThisKickers(index) compare sortedThatKickers(index)
+        }
+      }
+      0
+    }
+
   }
 
   object Straight {
@@ -136,21 +153,21 @@ object Combinations {
   }
 
   object ThreeOfAKind {
-    def unapply(hand: Hand): Option[ThreeOfAKind] = if (hand.countValueGroups().exists(_._2 == 3)) Some(new ThreeOfAKind(hand)) else None
+    def unapply(hand: Hand): Option[ThreeOfAKind] = if (hand.countValueGroups.exists(_._2 == 3)) Some(new ThreeOfAKind(hand)) else None
   }
 
   class TwoPairs(hand: Hand) extends Combination(hand, 3) {
   }
 
   object TwoPairs {
-    def unapply(hand: Hand): Option[TwoPairs] = if (hand.countValueGroups().values.count(_ == 2) == 2) Some(new TwoPairs(hand)) else None
+    def unapply(hand: Hand): Option[TwoPairs] = if (hand.countValueGroups.values.count(_ == 2) == 2) Some(new TwoPairs(hand)) else None
   }
 
   class Pair(hand: Hand) extends Combination(hand, 2) {
   }
 
   object Pair {
-    def unapply(hand: Hand): Option[Pair] = if (hand.countValueGroups().exists(_._2 == 2)) Some(new Pair(hand)) else None
+    def unapply(hand: Hand): Option[Pair] = if (hand.countValueGroups.exists(_._2 == 2)) Some(new Pair(hand)) else None
   }
 
   class HighCard(hand: Hand) extends Combination(hand, 1) {

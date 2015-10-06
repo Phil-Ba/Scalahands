@@ -8,11 +8,11 @@ import at.bayava.domain.Values.Value
  */
 class Hand(val cards: List[Card]) {
 
-  def kickers(): List[Card] = {
+  def kickers: List[Card] = {
     cards groupBy (_.value) collect { case single if single._2.size == 1 => single._2.head } toList
   }
 
-  def countValueGroups(): Map[Value, Int] = {
+  def countValueGroups: Map[Value, Int] = {
     cards groupBy {
       _.value
     } mapValues {
@@ -22,7 +22,7 @@ class Hand(val cards: List[Card]) {
     }
   }
 
-  def countColorGroups(): Map[Color, Int] = {
+  def countColorGroups: Map[Color, Int] = {
     cards groupBy {
       _.color
     } mapValues {

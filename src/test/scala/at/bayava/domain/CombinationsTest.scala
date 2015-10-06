@@ -231,6 +231,20 @@ class CombinationsTest extends BaseScalahandsSpec {
     }
   }
 
+  describe("Straight") {
+    it("should be compared by high card") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac qs kh td jc", "Ad tc qs jh ks", 0),
+        ("kc ts 9h qd jc", "ad 2c 4s 3h 5s", 1),
+        ("kc 8s 8h qd 8c", "2d jc js jh 3d", -1)
+      )
+
+      assertCompareResult(hands, {
+        new Straight(_)
+      })
+    }
+  }
+
   def assertCompareResult(hands: TableFor3[String, String, Int], constructor: Hand => Combination) = {
     forAll(hands) { (thisHand, thatHand, expected) =>
       val thisPair = constructor(Hand(thisHand))
