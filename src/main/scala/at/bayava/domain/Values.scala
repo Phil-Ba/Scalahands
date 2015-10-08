@@ -11,6 +11,7 @@ object Values {
     override def compare(that: Value): Int = this.ordinal.compare(that.ordinal)
   }
 
+  case object ACELOW extends Value('l', 1)
 
   case object TWO extends Value('2', 2)
 
@@ -43,7 +44,6 @@ object Values {
 
 
   def apply(value: Char): Value = {
-
     val valLower = value.toLower
     allValues.find({ (v: Value) =>
       v.value == valLower

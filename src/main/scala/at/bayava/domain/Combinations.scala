@@ -1,6 +1,6 @@
 package at.bayava.domain
 
-import at.bayava.domain.Values.{ACE, TWO, Value}
+import at.bayava.domain.Values.{ACE, ACELOW, TWO, Value}
 
 /**
  * Created by pbayer.
@@ -55,7 +55,7 @@ object Combinations {
     override def toString: String = this.getClass.getSimpleName
   }
 
-  class RoyalFlush(hand: Hand) extends Combination(hand, 9) {
+  class RoyalFlush(hand: Hand) extends StraightLike(hand, 9) {
   }
 
   object RoyalFlush {
@@ -109,12 +109,8 @@ object Combinations {
     def unapply(hand: Hand): Option[Flush] = if (hand.countColorGroups.exists(_._2 == hand.cards.size)) Some(new Flush(hand)) else None
   }
 
-  class Straight(hand: Hand) extends Combination(hand, 5) {
 
-    //    def aceLow(hand: Hand):List[Card]={
-    //      hand.kickers.
-    //    }
-
+  abstract class StraightLike(straightHand: Hand, ordinal: Int) extends Combination(StraightLike.makeHandAceLowIfNeeded(straightHand), ordinal) {
     override protected def compareKickers(that: Combination): Int = {
       val sortedThisKickers: List[Card] = this.hand.kickers.sorted(Ordering[Card].reverse)
       val sortedThatKickers: List[Card] = that.hand.kickers.sorted(Ordering[Card].reverse)
@@ -126,27 +122,44 @@ object Combinations {
       }
       0
     }
+  }
+
+  object StraightLike {
+
+    private[Combinations] def makeHandAceLowIfNeeded(hand: Hand): Hand = {
+      val aceLow = if (hand.cards.count((card: Card) => card.value == ACE || card.value == TWO) == 2) true else false
+      if (aceLow) {
+        println(s"Ace is low for hand $hand")
+        return new Hand(
+          hand.cards.map {
+            case a if a.value == ACE => new Card(ACELOW, a.color)
+            case c: Card => c
+          }
+        )
+      }
+      hand
+    }
+  }
+
+  class Straight(straightHand: Hand) extends StraightLike(straightHand, 5) {
 
   }
 
   object Straight {
-    def unapply(hand: Hand): Option[Straight] = {
-      var min: Int = hand.cards.min(Ordering[Card]).value.ordinal
-      val aceLow = if (min == TWO.ordinal && hand.cards.map(_.value.ordinal).contains(ACE.ordinal)) true else false
 
-      if (aceLow) min = 1
+    def unapply(hand: Hand): Option[Straight] = {
+      val workHand = StraightLike.makeHandAceLowIfNeeded(hand)
+
+      val min: Int = workHand.cards.min(Ordering[Card]).value.ordinal
       var sumOfStraight = min
-      for (x <- 1 to hand.cards.size - 1) {
+      for (x <- 1 to workHand.cards.size - 1) {
         sumOfStraight += x + min
       }
 
-      var sumOfHand = hand.cards.map(_.value.ordinal).sum
-      if (aceLow) {
-        sumOfHand = sumOfHand - ACE.ordinal + 1
-      }
-
-      if (sumOfStraight == sumOfHand) Some(new Straight(hand)) else None
+      val sumOfHand = workHand.cards.map(_.value.ordinal).sum
+      if (sumOfStraight == sumOfHand) Some(new Straight(workHand)) else None
     }
+
   }
 
   class ThreeOfAKind(hand: Hand) extends Combination(hand, 4) {

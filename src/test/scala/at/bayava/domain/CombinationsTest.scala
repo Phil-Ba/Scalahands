@@ -231,12 +231,12 @@ class CombinationsTest extends BaseScalahandsSpec {
     }
   }
 
-  describe("Straight") {
+  describe("Straights") {
     it("should be compared by high card") {
       val hands = Table(("this", "that", "expected"),
         ("Ac qs kh td jc", "Ad tc qs jh ks", 0),
         ("kc ts 9h qd jc", "ad 2c 4s 3h 5s", 1),
-        ("kc 8s 8h qd 8c", "2d jc js jh 3d", -1)
+        ("tc 8s 9h 7d 6c", "9d jc ts 8h 7d", -1)
       )
 
       assertCompareResult(hands, {
@@ -245,12 +245,79 @@ class CombinationsTest extends BaseScalahandsSpec {
     }
   }
 
+  describe("Full Houses") {
+    it("should primarily compared by the pairs") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as th td tc", "Ad ac ts th ts", 0),
+        ("kc ts th td kc", "8d jc js 8h js", -1),
+        ("8c ts th 8d 8c", "8d 8c 9s 8h 9s", 1),
+        ("ac as th td tc", "td tc js jh jd", -1)
+      )
+
+      assertCompareResult(hands, {
+        new FullHouse(_)
+      })
+    }
+  }
+
+  describe("Flushes") {
+    it("should primarily compared by the high card") {
+      val hands = Table(("this", "that", "expected"),
+        ("As 4s ts 3s 5s", "Ad 4d 3d td 5d", 0),
+        ("8s 4s ts 3s 5s", "Ad 4d 3d td 5d", -1),
+        ("As 4s ts 3s 5s", "jd 4d 3d td 5d", 1)
+      )
+
+      assertCompareResult(hands, {
+        new Flush(_)
+      })
+    }
+  }
+
+  describe("Pokers") {
+    it("should primarily compared by the pairs") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as ah ad 8c", "Ad ac as ah 8d", 0),
+        ("tc ts th td 7c", "8d 8c 8s 8h as", 1)
+      )
+
+      assertCompareResult(hands, {
+        new Poker(_)
+      })
+    }
+
+    it("and then by their kickers") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac as ah ad 9c", "Ad ac as ah 8s", 1),
+        ("qc qs qh qd 8c", "qd qc qs qh as", -1)
+      )
+
+      assertCompareResult(hands, {
+        new Poker(_)
+      })
+    }
+  }
+
+  describe("Royal Flushes") {
+    it("should be compared by high card") {
+      val hands = Table(("this", "that", "expected"),
+        ("Ac qc kc tc jc", "Ad td qd jd kd", 0),
+        ("kc tc 9c qc jc", "ad 2d 4d 3d 5d", 1),
+        ("th 8h 9h 7h 6h", "9s js ts 8s 7s", -1)
+      )
+
+      assertCompareResult(hands, {
+        new RoyalFlush(_)
+      })
+    }
+  }
+
   def assertCompareResult(hands: TableFor3[String, String, Int], constructor: Hand => Combination) = {
     forAll(hands) { (thisHand, thatHand, expected) =>
-      val thisPair = constructor(Hand(thisHand))
-      val thatPair = constructor(Hand(thatHand))
-      assert(thisPair.compareTo(thatPair).signum == expected)
-      assert(thatPair.compareTo(thisPair).signum == -expected)
+      val thisCombination = constructor(Hand(thisHand))
+      val thatCombination = constructor(Hand(thatHand))
+      assert(thisCombination.compareTo(thatCombination).signum == expected)
+      assert(thatCombination.compareTo(thisCombination).signum == -expected)
     }
   }
 
