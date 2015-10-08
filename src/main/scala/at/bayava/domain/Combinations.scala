@@ -55,7 +55,7 @@ object Combinations {
     override def toString: String = this.getClass.getSimpleName
   }
 
-  class RoyalFlush(hand: Hand) extends BaseSraight(hand, 9) {
+  class RoyalFlush(hand: Hand) extends BaseStraight(hand, 9) {
   }
 
   object RoyalFlush {
@@ -110,7 +110,7 @@ object Combinations {
   }
 
 
-  abstract class BaseSraight(straightHand: Hand, ordinal: Int) extends Combination(BaseSraight.makeHandAceLowIfNeeded(straightHand), ordinal) {
+  abstract class BaseStraight(straightHand: Hand, ordinal: Int) extends Combination(BaseStraight.makeHandAceLowIfNeeded(straightHand), ordinal) {
     override protected def compareKickers(that: Combination): Int = {
       val sortedThisKickers: List[Card] = this.hand.kickers.sorted(Ordering[Card].reverse)
       val sortedThatKickers: List[Card] = that.hand.kickers.sorted(Ordering[Card].reverse)
@@ -124,7 +124,7 @@ object Combinations {
     }
   }
 
-  object BaseSraight {
+  object BaseStraight {
 
     private[Combinations] def makeHandAceLowIfNeeded(hand: Hand): Hand = {
       val aceLow = if (hand.cards.count((card: Card) => card.value == ACE || card.value == TWO) == 2) true else false
@@ -141,14 +141,14 @@ object Combinations {
     }
   }
 
-  class Straight(straightHand: Hand) extends BaseSraight(straightHand, 5) {
+  class Straight(straightHand: Hand) extends BaseStraight(straightHand, 5) {
 
   }
 
   object Straight {
 
     def unapply(hand: Hand): Option[Straight] = {
-      val workHand = BaseSraight.makeHandAceLowIfNeeded(hand)
+      val workHand = BaseStraight.makeHandAceLowIfNeeded(hand)
 
       val min: Int = workHand.cards.min(Ordering[Card]).value.ordinal
       var sumOfStraight = min
